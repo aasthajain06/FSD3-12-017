@@ -1,0 +1,443 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopNow - Mobile Store</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    /* Header */
+    header {
+      background: #111;
+      color: white;
+      padding: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .cart {
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    /* Search */
+    .search {
+      margin-top: 14px;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    /* Categories */
+    .categories {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 15px;
+      background: white;
+    }
+
+    .category {
+      flex-shrink: 0;
+      padding: 9px 15px;
+      border-radius: 20px;
+      background: #eee;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .category.active {
+      background: #111;
+      color: white;
+    }
+
+    /* Hero */
+    .hero {
+      margin: 15px;
+      padding: 25px 20px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #222, #555);
+      color: white;
+    }
+
+    .hero h1 {
+      font-size: 27px;
+      margin-bottom: 8px;
+    }
+
+    .hero p {
+      font-size: 14px;
+      margin-bottom: 18px;
+      color: #ddd;
+    }
+
+    .shop-btn {
+      border: none;
+      padding: 11px 18px;
+      border-radius: 7px;
+      background: white;
+      color: #111;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Products */
+    .section-title {
+      padding: 5px 15px 15px;
+      font-size: 21px;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      padding: 0 15px 25px;
+    }
+
+    .product {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 150px;
+      background: #eee;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 60px;
+    }
+
+    .product-info {
+      padding: 12px;
+    }
+
+    .product-name {
+      font-size: 15px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .rating {
+      font-size: 12px;
+      color: #777;
+      margin-bottom: 8px;
+    }
+
+    .price {
+      font-size: 17px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .add-btn {
+      width: 100%;
+      padding: 9px;
+      border: none;
+      border-radius: 6px;
+      background: #111;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .add-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* Footer */
+    footer {
+      background: #111;
+      color: white;
+      text-align: center;
+      padding: 25px 15px;
+      font-size: 13px;
+    }
+
+    /* Cart popup */
+    .cart-box {
+      display: none;
+      position: fixed;
+      right: 15px;
+      top: 65px;
+      width: 280px;
+      background: white;
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.25);
+      z-index: 200;
+    }
+
+    .cart-box h3 {
+      margin-bottom: 12px;
+    }
+
+    .cart-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #ddd;
+      font-size: 14px;
+    }
+
+    .total {
+      font-weight: bold;
+      margin-top: 12px;
+    }
+
+    /* Larger screens */
+    @media (min-width: 700px) {
+      body {
+        max-width: 1000px;
+        margin: auto;
+      }
+
+      .products {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .product-image {
+        height: 180px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="header-top">
+      <div class="logo">ShopNow</div>
+      <div class="cart" onclick="toggleCart()">🛒 <span id="cartCount">0</span></div>
+    </div>
+
+    <input
+      type="text"
+      id="search"
+      class="search"
+      placeholder="Search products..."
+      oninput="searchProducts()"
+    >
+  </header>
+
+  <!-- Categories -->
+  <div class="categories">
+    <div class="category active" onclick="filterProducts('all', this)">All</div>
+    <div class="category" onclick="filterProducts('fashion', this)">Fashion</div>
+    <div class="category" onclick="filterProducts('electronics', this)">Electronics</div>
+    <div class="category" onclick="filterProducts('shoes', this)">Shoes</div>
+    <div class="category" onclick="filterProducts('accessories', this)">Accessories</div>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>Big Summer Sale 🔥</h1>
+    <p>Get amazing products at prices you'll love.</p>
+    <button class="shop-btn" onclick="scrollToProducts()">Shop Now</button>
+  </section>
+
+  <!-- Products -->
+  <h2 class="section-title" id="productsTitle">Popular Products</h2>
+
+  <section class="products" id="products">
+
+    <div class="product" data-category="fashion" data-name="Classic T-Shirt">
+      <div class="product-image">👕</div>
+      <div class="product-info">
+        <div class="product-name">Classic T-Shirt</div>
+        <div class="rating">⭐⭐⭐⭐⭐</div>
+        <div class="price">₹499</div>
+        <button class="add-btn" onclick="addToCart('Classic T-Shirt', 499)">
+          Add to Cart
+        </button>
+      </div>
+    </div>
+
+    <div class="product" data-category="electronics" data-name="Wireless Headphones">
+      <div class="product-image">🎧</div>
+      <div class="product-info">
+        <div class="product-name">Wireless Headphones</div>
+        <div class="rating">⭐⭐⭐⭐☆</div>
+        <div class="price">₹1,999</div>
+        <button class="add-btn" onclick="addToCart('Wireless Headphones', 1999)">
+          Add to Cart
+        </button>
+      </div>
+    </div>
+
+    <div class="product" data-category="shoes" data-name="Running Shoes">
+      <div class="product-image">👟</div>
+      <div class="product-info">
+        <div class="product-name">Running Shoes</div>
+        <div class="rating">⭐⭐⭐⭐⭐</div>
+        <div class="price">₹2,499</div>
+        <button class="add-btn" onclick="addToCart('Running Shoes', 2499)">
+          Add to Cart
+        </button>
+      </div>
+    </div>
+
+    <div class="product" data-category="accessories" data-name="Smart Watch">
+      <div class="product-image">⌚</div>
+      <div class="product-info">
+        <div class="product-name">Smart Watch</div>
+        <div class="rating">⭐⭐⭐⭐☆</div>
+        <div class="price">₹2,999</div>
+        <button class="add-btn" onclick="addToCart('Smart Watch', 2999)">
+          Add to Cart
+        </button>
+      </div>
+    </div>
+
+    <div class="product" data-category="fashion" data-name="Denim Jacket">
+      <div class="product-image">🧥</div>
+      <div class="product-info">
+        <div class="product-name">Denim Jacket</div>
+        <div class="rating">⭐⭐⭐⭐⭐</div>
+        <div class="price">₹1,499</div>
+        <button class="add-btn" onclick="addToCart('Denim Jacket', 1499)">
+          Add to Cart
+        </button>
+      </div>
+    </div>
+
+    <div class="product" data-category="electronics" data-name="Bluetooth Speaker">
+      <div class="product-image">🔊</div>
+      <div class="product-info">
+        <div class="product-name">Bluetooth Speaker</div>
+        <div class="rating">⭐⭐⭐⭐☆</div>
+        <div class="price">₹1,299</div>
+        <button class="add-btn" onclick="addToCart('Bluetooth Speaker', 1299)">
+          Add to Cart
+        </button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Cart -->
+  <div class="cart-box" id="cartBox">
+    <h3>Your Cart</h3>
+    <div id="cartItems">Cart is empty.</div>
+    <div class="total" id="cartTotal">Total: ₹0</div>
+  </div>
+
+  <footer>
+    <p>© 2026 ShopNow</p>
+    <p>Quality products • Great prices</p>
+  </footer>
+
+  <script>
+    let cart = [];
+    let total = 0;
+
+    function addToCart(name, price) {
+      cart.push({ name, price });
+      total += price;
+
+      document.getElementById("cartCount").textContent = cart.length;
+
+      updateCart();
+
+      alert(name + " added to cart!");
+    }
+
+    function updateCart() {
+      const cartItems = document.getElementById("cartItems");
+
+      if (cart.length === 0) {
+        cartItems.innerHTML = "Cart is empty.";
+      } else {
+        cartItems.innerHTML = cart.map((item, index) =>
+          `<div class="cart-item">
+            ${item.name} - ₹${item.price}
+          </div>`
+        ).join("");
+      }
+
+      document.getElementById("cartTotal").textContent =
+        "Total: ₹" + total.toLocaleString("en-IN");
+    }
+
+    function toggleCart() {
+      const box = document.getElementById("cartBox");
+
+      if (box.style.display === "block") {
+        box.style.display = "none";
+      } else {
+        box.style.display = "block";
+      }
+    }
+
+    function filterProducts(category, element) {
+      document.querySelectorAll(".category").forEach(btn => {
+        btn.classList.remove("active");
+      });
+
+      element.classList.add("active");
+
+      document.querySelectorAll(".product").forEach(product => {
+        if (
+          category === "all" ||
+          product.dataset.category === category
+        ) {
+          product.style.display = "block";
+        } else {
+          product.style.display = "none";
+        }
+      });
+    }
+
+    function searchProducts() {
+      const search = document
+        .getElementById("search")
+        .value
+        .toLowerCase();
+
+      document.querySelectorAll(".product").forEach(product => {
+        const name = product.dataset.name.toLowerCase();
+
+        product.style.display =
+          name.includes(search) ? "block" : "none";
+      });
+    }
+
+    function scrollToProducts() {
+      document.getElementById("productsTitle").scrollIntoView({
+        behavior: "smooth"
+      });
+    }
+  </script>
+
+</body>
+</html>
+```

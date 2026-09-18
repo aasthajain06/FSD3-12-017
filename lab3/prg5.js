@@ -7,7 +7,8 @@ const server = http.createServer((req, res) => {
       <a href="/product">Product Page</a>
       <a href="/contact">Contact Us</a>
     `);
-  } else if (req.url === "/product") {
+  }
+  else if (req.url === "/product") {
     res.write(`
             <h1>Iphone XL</h1>
             <h2> Price: 90000</h2>

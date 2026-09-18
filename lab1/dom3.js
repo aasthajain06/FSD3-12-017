@@ -10,4 +10,5 @@ button.on("click", (uname) => {
 button.emit("click", "John");
 button.emit("click", "Alice");
 button.emit("click", "Bob");
+button.emit("click", "Eve");
 button.emit("click");

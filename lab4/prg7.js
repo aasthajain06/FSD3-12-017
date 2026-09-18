@@ -6,6 +6,16 @@ const server = http.createServer((req, res) => {
     res.end(JSON.stringify({ msg: "all users", data: getAllUsers() }));
   } 
   else if ((req.url === "/api/users", req.method === "POST")) {
+    let body = ' ';
+    req.on('data', (chunk) => {
+      body += chunk;
+    })
+
+    req.on('end', () => {
+      const user = JSON.parse(body);
+      console.log(user);
+    }); 
+
     res.end(JSON.stringify({ msg: "add user" }));
   } 
   else if ((req.url === "/api/users/1", req.method === "GET")) {
